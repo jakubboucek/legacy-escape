@@ -30,8 +30,8 @@
     },
     "scripts": {
         "phpstan": "phpstan analyze src --level 7",
-        "ecs": "ecs",
-        "ecs-fix": "ecs --fix",
+        "ecs": "ecs check",
+        "ecs-fix": "ecs check --fix",
         "tester": "tester tests"
     }
 }
