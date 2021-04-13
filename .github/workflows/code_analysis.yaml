@@ -1,0 +1,58 @@
+name: Code Analysis
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  code_analysis:
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.3', '7.4', '8.0']
+        actions:
+          - name: PHPStan
+            run: composer phpstan
+
+          - name: Easy Coding Standard
+            run: composer ecs
+
+          - name: Unit tests
+            run: vendor/bin/tester tests -s -C
+
+    name: ${{ matrix.actions.name }} at PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+
+      # see https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json
+          coverage: none
+
+
+      # see https://github.com/actions/cache/blob/main/examples.md#php---composer
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ${{ steps.composer-cache.outputs.dir }}
+            **/composer.lock
+          key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php }}-composer-
+
+
+      - name: Install Composer
+        run: composer install --no-progress
+
+      - run: ${{ matrix.actions.run }}
