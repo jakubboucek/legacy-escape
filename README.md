@@ -19,7 +19,7 @@ Package is substrate of [Latte package](https://github.com/nette/latte/)
 ## Install
 
 ```shell
-composer require redbitcz/escape
+composer require jakubboucek/legacy-escape
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ echo 'Registered user: ' . $username;
 
 Use:
 ```php
-echo 'Registered user: ' . \Redbitcz\Escape\Escape::html($username);
+echo 'Registered user: ' . \JakubBoucek\Escape\Escape::html($username);
 ```
 
 ## FAQ
