@@ -56,8 +56,8 @@ It's prevent attact by escaping color value context.
 
 ### Is it support for escaping SQL query?
 
-No, SQL requires access to active SQL connection to right escape. This package is only aloow to escape contexts without
-external requrements.
+No, SQL requires access to active SQL connection to right escape. This package is only allows to escape contexts without
+external requirements.
 
 ## Contributing
 Please don't hesitate send Issue or Pull Request.
