@@ -13,8 +13,10 @@ Package is substrate of [Latte package](https://github.com/nette/latte/)
 - Escape HTML attributes
 - Escape HTML comments
 - Escape JS
-- Escape CSS
 - Escape URL
+- Escape CSS
+- Escape CSS specifics for few properties: 
+    - `color` value
 
 ## Install
 
@@ -34,12 +36,28 @@ Use:
 echo 'Registered user: ' . \JakubBoucek\Escape\Escape::html($username);
 ```
 
+## CSS specifics
+
+In few cases you cannot use `\JakubBoucek\Escape\Escape::css($cssColor)` to escape
+some known format, because standard escaping is broke CSS format. Class `EscapeCss` has prepared
+limited set of known propetries with specefics format:
+
+### `color` property
+
+Sanitize value od CSS `color` property to safe format, example:
+
+```php
+echo '<style>color: ' . \JakubBoucek\Escape\EscapeCss::color($cssColor) . ';</style>';
+```
+
+It's prevent attact by escaping color value context.
+
 ## FAQ
 
 ### Is it support for escaping SQL query?
 
-No, SQL requires access to active SQL connection to right escape. This package is only aloow to escape contexts without
-external requrements.
+No, SQL requires access to active SQL connection to right escape. This package is only allows to escape contexts without
+external requirements.
 
 ## Contributing
 Please don't hesitate send Issue or Pull Request.
