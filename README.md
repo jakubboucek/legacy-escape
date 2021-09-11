@@ -52,6 +52,15 @@ echo '<style>color: ' . \JakubBoucek\Escape\EscapeCss::color($cssColor) . ';</st
 
 It's prevent attact by escaping color value context.
 
+## Output without any escaping
+
+In some cases you intentionally want to output variable without any escaping, but somebody other or your future self may
+mistakenly believe you forgot to escape it. Here you can use `noescape()` method to mark code as intentionally unescaped. 
+
+```php
+echo \JakubBoucek\Escape\Escape::noescape($htmlContent);
+```
+
 ## FAQ
 
 ### Is it support for escaping SQL query?
