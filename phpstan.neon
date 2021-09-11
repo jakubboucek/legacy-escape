@@ -1,0 +1,6 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '#Instanceof between mixed and Nette\\HtmlStringable will always evaluate to false\.#'
+            path: src/Escape.php
+            count: 2

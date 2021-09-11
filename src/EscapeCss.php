@@ -1,6 +1,7 @@
 <?php
 
-declare(strict_types=1);
+// Intentionally no strict – package is most used to secure legacy projects
+// declare(strict_types=1);
 
 namespace JakubBoucek\Escape;
 

@@ -28,7 +28,7 @@
         }
     },
     "scripts": {
-        "phpstan": "phpstan analyze src --level 7",
+        "phpstan": "phpstan analyze src -c phpstan.neon --level 7",
         "tester": "tester tests"
     }
 }

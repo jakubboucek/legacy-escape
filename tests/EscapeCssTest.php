@@ -1,6 +1,7 @@
 <?php
 
-use JakubBoucek\Escape\Escape;
+declare(strict_types=1);
+
 use JakubBoucek\Escape\EscapeCss;
 use Tester\Assert;
 use Tester\Environment;
