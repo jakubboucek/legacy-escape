@@ -16,11 +16,10 @@
     ],
     "require": {
         "php": ">= 7.1",
-        "nette/utils": "^3.1"
+        "nette/utils": "^3.0"
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.12.83",
-        "symplify/easy-coding-standard": "^9.2",
+        "phpstan/phpstan": "^0.12.98",
         "nette/tester": "^2.4"
     },
     "autoload": {
@@ -29,9 +28,7 @@
         }
     },
     "scripts": {
-        "phpstan": "phpstan analyze src --level 7",
-        "ecs": "ecs check",
-        "ecs-fix": "ecs check --fix",
+        "phpstan": "phpstan analyze src -c phpstan.neon --level 7",
         "tester": "tester tests"
     }
 }

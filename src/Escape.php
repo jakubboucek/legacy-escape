@@ -5,6 +5,8 @@
 
 namespace JakubBoucek\Escape;
 
+use Nette\HtmlStringable;
+use Nette\Utils\IHtmlString;
 use Nette\Utils\Json;
 
 /**
@@ -18,13 +20,16 @@ class Escape
 {
     /**
      * Escapes string for use everywhere inside HTML (except for comments)
-     * @param string|mixed $data
+     * @param string|HtmlStringable|IHtmlString|mixed $data
      * @return string
      *
      * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#27-35
      */
     public static function html($data): string
     {
+        if ($data instanceof HtmlStringable || $data instanceof IHtmlString) {
+            return $data->__toString();
+        }
         return htmlspecialchars((string)$data, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
     }
 
@@ -65,6 +70,22 @@ class Escape
     }
 
     /**
+     * Escapes string for use everywhere inside XML (except for comments).
+     * @param string|mixed $data
+     * @return string XML
+     *
+     * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#_escapeXml
+     */
+    public static function xml($data): string
+    {
+        // XML 1.0: \x09 \x0A \x0D and C1 allowed directly, C0 forbidden
+        // XML 1.1: \x00 forbidden directly and as a character reference,
+        //   \x09 \x0A \x0D \x85 allowed directly, C0, C1 and \x7F allowed as character references
+        $data = preg_replace('#[\x00-\x08\x0B\x0C\x0E-\x1F]#', "\u{FFFD}", (string)$data);
+        return htmlspecialchars($data, ENT_QUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8');
+    }
+
+    /**
      * Escapes string for use inside JS code
      * @param mixed $data
      * @return string
@@ -73,6 +94,10 @@ class Escape
      */
     public static function js($data): string
     {
+        if ($data instanceof HtmlStringable || $data instanceof IHtmlString) {
+            $data = $data->__toString();
+        }
+
         $json = Json::encode($data);
 
         return str_replace([']]>', '<!', '</'], [']]\u003E', '\u003C!', '<\/'], $json);

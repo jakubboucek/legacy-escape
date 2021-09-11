@@ -12,6 +12,7 @@ Package is substrate of [Latte package](https://github.com/nette/latte/)
 - Escape HTML
 - Escape HTML attributes
 - Escape HTML comments
+- Escape XML
 - Escape JS
 - Escape URL
 - Escape CSS
@@ -51,6 +52,10 @@ echo '<style>color: ' . \JakubBoucek\Escape\EscapeCss::color($cssColor) . ';</st
 ```
 
 It's prevent attact by escaping color value context.
+
+## Safe HTML content
+
+Package supports escaping HTML with included [safe HTML content](https://doc.nette.org/en/3.1/html-elements).
 
 ## Output without any escaping
 

@@ -9,13 +9,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.3', '7.4', '8.0', '8.1']
+        php:
+        #  - '7.1' # incompatible tester
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+        #  - '8.1' # not yet compatible (PHP 8.1 RC2)
         actions:
           - name: PHPStan
             run: composer phpstan
-
-          - name: Easy Coding Standard
-            run: composer ecs
 
           - name: Unit tests
             run: vendor/bin/tester tests -s -C
@@ -48,8 +51,6 @@ jobs:
             ${{ steps.composer-cache.outputs.dir }}
             **/composer.lock
           key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.php }}-composer-
 
 
       - name: Install Composer

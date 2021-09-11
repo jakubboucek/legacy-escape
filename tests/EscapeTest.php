@@ -1,6 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use JakubBoucek\Escape\Escape;
+use Nette\Utils\Html;
 use Tester\Assert;
 use Tester\Environment;
 use Tester\TestCase;
@@ -30,6 +33,7 @@ class EscapeTest extends TestCase
             ['&quot; &apos; &lt; &gt; &amp; �', "\" ' < > & \x8F"],
             ['`hello`', '`hello`'],
             ['` &lt;br&gt; `', '` <br> `'],
+            ['Foo<br>bar', Html::fromHtml('Foo<br>bar')]
         ];
     }
 
@@ -61,6 +65,7 @@ class EscapeTest extends TestCase
             ['`hello` ', '`hello`'],
             ['``onmouseover=alert(1) ', '``onmouseover=alert(1)'],
             ['` &lt;br&gt; `', '` <br> `'],
+            ['Foo&lt;br&gt;bar', Html::fromHtml('Foo<br>bar')]
         ];
     }
 
@@ -94,6 +99,7 @@ class EscapeTest extends TestCase
             ['`hello`', '`hello`'],
             ['``onmouseover=alert(1)', '``onmouseover=alert(1)'],
             ['` <br> `', '` <br> `'],
+            ['Foo<br>bar', Html::fromHtml('Foo<br>bar')]
         ];
     }
 
@@ -103,6 +109,43 @@ class EscapeTest extends TestCase
     public function testHtmlComment(string $expected, $data): void
     {
         Assert::same($expected, Escape::htmlComment($data));
+    }
+
+    public function getXmlArgs(): array
+    {
+        return [
+
+            ['', null],
+            ['', ''],
+            ['1', 1],
+            ['string', 'string'],
+            ['&lt; &amp; &apos; &quot; &gt;', '< & \' " >'],
+            ['&lt;br&gt;', Html::fromHtml('<br>')],
+            [
+                "\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\x09\x0a\u{FFFD}\u{FFFD}\x0d\u{FFFD}\u{FFFD}",
+                "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
+            ],
+            [
+                "\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}",
+                "\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f"
+            ],
+            // invalid UTF-8
+            ["foo \u{FFFD} bar", "foo \u{D800} bar"], // invalid codepoint high surrogates
+            ["foo \u{FFFD}&quot; bar", "foo \xE3\x80\x22 bar"], // stripped UTF
+            ['&amp;quot;', '&quot;'],
+            ['`hello', '`hello'],
+            ['Hello &lt;World&gt;', 'Hello <World>'],
+            ['` &lt;br&gt; `', '` <br> `'],
+            ['Foo&lt;br&gt;bar', Html::fromHtml('Foo<br>bar')]
+        ];
+    }
+
+    /**
+     * @dataProvider getXmlArgs
+     */
+    public function testXml(string $expected, $data): void
+    {
+        Assert::same($expected, Escape::xml($data));
     }
 
     public function getJsArgs(): array
@@ -118,6 +161,7 @@ class EscapeTest extends TestCase
             ['["0","1"]', ['0', '1']],
             ['{"a":"0","b":"1"}', ['a' => '0', 'b' => '1']],
             ['"<\\/script>"', '</script>'],
+            ['"Foo<br>bar"', Html::fromHtml('Foo<br>bar')]
         ];
     }
 
@@ -140,6 +184,8 @@ class EscapeTest extends TestCase
             ["foo \u{D800} bar", "foo \u{D800} bar"], // invalid codepoint high surrogates
             ["foo \xE3\x80\\\x22 bar", "foo \xE3\x80\x22 bar"], // stripped UTF
             ['\\<\\/style\\>', '</style>'],
+            ['Foo\\<br\\>bar', Html::fromHtml('Foo<br>bar')]
+
         ];
     }
 
@@ -165,6 +211,7 @@ class EscapeTest extends TestCase
             ['a+b', 'a b'],
             ['a%27b', 'a\'b'],
             ['a%22b', 'a"b'],
+            ['Foo%3Cbr%3Ebar', Html::fromHtml('Foo<br>bar')]
         ];
     }
 
@@ -175,6 +222,37 @@ class EscapeTest extends TestCase
     {
         Assert::same($expected, Escape::url($data));
     }
+
+    public function getNoescapeArgs(): array
+    {
+        return [
+            ['', null],
+            ['', ''],
+            ['1', 1],
+            ['string', 'string'],
+            ['<br>', '<br>'],
+            ['< & \' " >', '< & \' " >'],
+            ['&quot;', '&quot;'],
+            ['`hello', '`hello'],
+            ["foo \u{D800} bar", "foo \u{D800} bar"], // invalid codepoint high surrogates
+            ["foo \xE3\x80\x22 bar", "foo \xE3\x80\x22 bar"], // stripped UTF
+            ['Hello World', 'Hello World'],
+            ['Hello <World>', 'Hello <World>'],
+            ["\" ' < > & \x8F", "\" ' < > & \x8F"],
+            ['`hello`', '`hello`'],
+            ['` <br> `', '` <br> `'],
+            ['Foo<br>bar', Html::fromHtml('Foo<br>bar')]
+        ];
+    }
+
+    /**
+     * @dataProvider getNoescapeArgs
+     */
+    public function testNoescape(string $expected, $data): void
+    {
+        Assert::same($expected, Escape::noescape($data));
+    }
+
 }
 
 (new EscapeTest())->run();
