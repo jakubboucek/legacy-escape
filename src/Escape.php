@@ -100,4 +100,15 @@ class Escape
     {
         return urlencode((string)$url);
     }
+
+    /**
+     * Just returns argument as is without any escaping
+     * Method is useful to mark code as intentionally unescaped as opposed to simple neglected
+     * @param string|mixed $url
+     * @return string
+     */
+    public static function noescape($url): string
+    {
+        return (string)$url;
+    }
 }
