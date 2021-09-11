@@ -20,7 +20,6 @@
     },
     "require-dev": {
         "phpstan/phpstan": "^0.12.83",
-        "symplify/easy-coding-standard": "^9.2",
         "nette/tester": "^2.4"
     },
     "autoload": {
@@ -30,8 +29,6 @@
     },
     "scripts": {
         "phpstan": "phpstan analyze src --level 7",
-        "ecs": "ecs check",
-        "ecs-fix": "ecs check --fix",
         "tester": "tester tests"
     }
 }

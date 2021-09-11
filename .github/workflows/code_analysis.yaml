@@ -14,9 +14,6 @@ jobs:
           - name: PHPStan
             run: composer phpstan
 
-          - name: Easy Coding Standard
-            run: composer ecs
-
           - name: Unit tests
             run: vendor/bin/tester tests -s -C
 
