@@ -10,12 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         php:
-        #  - '7.1' # incompatible tester
           - '7.2'
           - '7.3'
           - '7.4'
           - '8.0'
-        #  - '8.1' # not yet compatible (PHP 8.1 RC2)
+          - '8.1'
         actions:
           - name: PHPStan
             run: composer phpstan
