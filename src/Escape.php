@@ -7,7 +7,7 @@ namespace JakubBoucek\Escape;
 
 use Nette\HtmlStringable;
 use Nette\Utils\IHtmlString;
-use Nette\Utils\Json;
+use RuntimeException;
 
 /**
  * Escape funxtions. Uses UTF-8 only.
@@ -28,7 +28,7 @@ class Escape
     public static function html($data): string
     {
         if ($data instanceof HtmlStringable || $data instanceof IHtmlString) {
-            return $data->__toString();
+            return (string)$data;
         }
         return htmlspecialchars((string)$data, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
     }
@@ -78,10 +78,11 @@ class Escape
      */
     public static function xml($data): string
     {
+        $data = (string)$data;
         // XML 1.0: \x09 \x0A \x0D and C1 allowed directly, C0 forbidden
         // XML 1.1: \x00 forbidden directly and as a character reference,
         //   \x09 \x0A \x0D \x85 allowed directly, C0, C1 and \x7F allowed as character references
-        $data = preg_replace('#[\x00-\x08\x0B\x0C\x0E-\x1F]#', "\u{FFFD}", (string)$data);
+        $data = preg_replace('#[\x00-\x08\x0B\x0C\x0E-\x1F]#', "\u{FFFD}", $data);
         return htmlspecialchars($data, ENT_QUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8');
     }
 
@@ -95,10 +96,14 @@ class Escape
     public static function js($data): string
     {
         if ($data instanceof HtmlStringable || $data instanceof IHtmlString) {
-            $data = $data->__toString();
+            $data = (string)$data;
         }
 
-        $json = Json::encode($data);
+        $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
+
+        if ($json === false) {
+            throw new RuntimeException("JSON encode failed: " . json_last_error_msg(), json_last_error());
+        }
 
         return str_replace([']]>', '<!', '</'], [']]\u003E', '\u003C!', '<\/'], $json);
     }
@@ -112,8 +117,9 @@ class Escape
      */
     public static function css($data): string
     {
+        $data = (string)$data;
         // http://www.w3.org/TR/2006/WD-CSS21-20060411/syndata.html#q6
-        return addcslashes((string)$data, "\x00..\x1F!\"#$%&'()*+,./:;<=>?@[\\]^`{|}~");
+        return addcslashes($data, "\x00..\x1F!\"#$%&'()*+,./:;<=>?@[\\]^`{|}~");
     }
 
     /**
@@ -123,17 +129,18 @@ class Escape
      */
     public static function url($url): string
     {
-        return urlencode((string)$url);
+        $url = (string)$url;
+        return urlencode($url);
     }
 
     /**
      * Just returns argument as is without any escaping
      * Method is useful to mark code as intentionally unescaped as opposed to simple neglected
-     * @param string|mixed $url
+     * @param string|mixed $data
      * @return string
      */
-    public static function noescape($url): string
+    public static function noescape($data): string
     {
-        return (string)$url;
+        return (string)$data;
     }
 }

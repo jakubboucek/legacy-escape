@@ -5,8 +5,6 @@
 
 namespace JakubBoucek\Escape;
 
-use Nette\Utils\Strings;
-
 class EscapeCss
 {
     /**
@@ -43,12 +41,12 @@ class EscapeCss
      */
     public static function color(string $color): string
     {
-        $valid = (bool)Strings::match(
-            $color,
-            '/^\s*(?:[-a-zA-Z]+|#[\da-fA-F]{3,8}|(?:rgba?|hsla?|lch|lab)\([\d,.%\\/ ]+\))\s*$/D'
+        $result = preg_match(
+            '/^\s*(?:[-a-zA-Z]+|#[\da-fA-F]{3,8}|(?:rgba?|hsla?|lch|lab)\([\d,.%\\/ ]+\))\s*$/D',
+            $color
         );
 
-        if ($valid === false) {
+        if ($result !== 1) {
             return '';
         }
 
