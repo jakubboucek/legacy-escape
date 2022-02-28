@@ -7,7 +7,7 @@ namespace JakubBoucek\Escape;
 
 use Nette\HtmlStringable;
 use Nette\Utils\IHtmlString;
-use Nette\Utils\Json;
+use RuntimeException;
 
 /**
  * Escape funxtions. Uses UTF-8 only.
@@ -99,7 +99,11 @@ class Escape
             $data = (string)$data;
         }
 
-        $json = Json::encode($data);
+        $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION);
+
+        if ($json === false) {
+            throw new RuntimeException("JSON encode failed: " . json_last_error_msg(), json_last_error());
+        }
 
         return str_replace([']]>', '<!', '</'], [']]\u003E', '\u003C!', '<\/'], $json);
     }
