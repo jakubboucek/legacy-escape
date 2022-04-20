@@ -10,8 +10,8 @@ use Nette\Utils\IHtmlString;
 use RuntimeException;
 
 /**
- * Escape funxtions. Uses UTF-8 only.
- * Substrate of Filters class from Latte/Latte package
+ * Escape functions. Uses UTF-8 only.
+ * Substrate of Filters class from Latte/Latte package.
  *
  * @link https://latte.nette.org/
  * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#Filters
@@ -19,7 +19,7 @@ use RuntimeException;
 class Escape
 {
     /**
-     * Escapes string for use everywhere inside HTML (except for comments)
+     * Escapes string for use everywhere inside HTML (except for comments).
      * @param string|HtmlStringable|IHtmlString|mixed $data
      * @return string
      *
@@ -87,8 +87,8 @@ class Escape
     }
 
     /**
-     * Escapes string for use inside JS code
-     * @param mixed $data
+     * Escapes string for use inside JS code.
+     * @param string|HtmlStringable|IHtmlString|mixed $data
      * @return string
      *
      * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#_escapeJs
@@ -109,7 +109,7 @@ class Escape
     }
 
     /**
-     * Escapes string for use inside CSS code
+     * Escapes string for use inside CSS code.
      * @param string|mixed $data
      * @return string
      *
@@ -123,19 +123,19 @@ class Escape
     }
 
     /**
-     * Escapes string for use inside URL
-     * @param string|mixed $url
+     * Escapes string for use inside URL.
+     * @param string|mixed $data
      * @return string
      */
-    public static function url($url): string
+    public static function url($data): string
     {
-        $url = (string)$url;
-        return urlencode($url);
+        $data = (string)$data;
+        return urlencode($data);
     }
 
     /**
-     * Just returns argument as is without any escaping
-     * Method is useful to mark code as intentionally unescaped as opposed to simple neglected
+     * Just returns argument as is without any escaping.
+     * Method is useful to mark code as intentionally unescaped as opposed to simple neglected.
      * @param string|mixed $data
      * @return string
      */
