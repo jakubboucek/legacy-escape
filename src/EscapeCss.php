@@ -5,6 +5,9 @@
 
 namespace JakubBoucek\Escape;
 
+/**
+ * Escape functions for CSS entities.
+ */
 class EscapeCss
 {
     /**
