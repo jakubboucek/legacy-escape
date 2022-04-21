@@ -34,12 +34,21 @@ echo 'Registered user: ' . $username;
 
 Use:
 ```php
-echo 'Registered user: ' . \JakubBoucek\Escape\Escape::html($username);
+use JakubBoucek\Escape\Escape;
+
+echo 'Registered user: ' . Escape::html($username);
+```
+
+You can use shortcut by aliasing too:
+```php
+use JakubBoucek\Escape\Escape as E;
+
+echo 'Registered user: ' . E::html($username);
 ```
 
 ## CSS specifics
 
-In few cases you cannot use `\JakubBoucek\Escape\Escape::css($cssColor)` to escape
+In few cases you cannot use `Escape::css($cssColor)` to escape
 some known format, because standard escaping is broke CSS format. Class `EscapeCss` has prepared
 limited set of known propetries with specefics format:
 
@@ -48,7 +57,9 @@ limited set of known propetries with specefics format:
 Sanitize value od CSS `color` property to safe format, example:
 
 ```php
-echo '<style>color: ' . \JakubBoucek\Escape\EscapeCss::color($cssColor) . ';</style>';
+use JakubBoucek\Escape\EscapeCss;
+
+echo '<style>color: ' . EscapeCss::color($cssColor) . ';</style>';
 ```
 
 It's prevent attact by escaping color value context.
@@ -56,6 +67,20 @@ It's prevent attact by escaping color value context.
 ## Safe HTML content
 
 Package supports escaping HTML with included [safe HTML content](https://doc.nette.org/en/3.1/html-elements).
+
+Usage:
+```php
+use JakubBoucek\Escape\Escape;
+use Nette\Utils\Html; 
+
+$avatarUrl = 'http:/example.com/avatar.png';
+$username = 'John Doe <script>hack</script>';
+
+$avatarImage = Html::el('img')->src($avatarUrl)->width(16);
+echo Escape::html($avatarImage, ' ', $username);
+
+// <img src="http:/example.com/avatar.png" width="16"> John Doe &lt;script&gt;hack&lt;/script&gt;
+```
 
 ## Output without any escaping
 
