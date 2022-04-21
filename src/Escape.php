@@ -19,18 +19,25 @@ use RuntimeException;
 class Escape
 {
     /**
-     * Escapes string for use everywhere inside HTML (except for comments).
-     * @param string|HtmlStringable|IHtmlString|mixed $data
+     * Escapes strings for use everywhere inside HTML (except for comments) and concatenate it to string.
+     * @param string|HtmlStringable|IHtmlString|mixed ...$data
      * @return string
      *
      * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#27-35
      */
-    public static function html($data): string
+    public static function html(...$data): string
     {
-        if ($data instanceof HtmlStringable || $data instanceof IHtmlString) {
-            return (string)$data;
+        $output = '';
+
+        foreach ($data as $item) {
+            if ($item instanceof HtmlStringable || $item instanceof IHtmlString) {
+                $output .= $item;
+            } else {
+                $output .= htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
+            }
         }
-        return htmlspecialchars((string)$data, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
+
+        return $output;
     }
 
     /**

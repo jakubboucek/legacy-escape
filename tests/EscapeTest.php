@@ -18,31 +18,40 @@ class EscapeTest extends TestCase
     public function getHtmlArgs(): array
     {
         return [
-            ['', null],
-            ['', ''],
-            ['1', 1],
-            ['string', 'string'],
-            ['&lt;br&gt;', '<br>'],
-            ['&lt; &amp; &apos; &quot; &gt;', '< & \' " >'],
-            ['&amp;quot;', '&quot;'],
-            ['`hello', '`hello'],
-            ["foo \u{FFFD} bar", "foo \u{D800} bar"], // invalid codepoint high surrogates
-            ["foo \u{FFFD}&quot; bar", "foo \xE3\x80\x22 bar"], // stripped UTF
-            ['Hello World', 'Hello World'],
-            ['Hello &lt;World&gt;', 'Hello <World>'],
-            ['&quot; &apos; &lt; &gt; &amp; �', "\" ' < > & \x8F"],
-            ['`hello`', '`hello`'],
-            ['` &lt;br&gt; `', '` <br> `'],
-            ['Foo<br>bar', Html::fromHtml('Foo<br>bar')]
+            ['', []],
+            ['', [null]],
+            ['', ['']],
+            ['1', [1]],
+            ['string', ['string']],
+            ['&lt;br&gt;', ['<br>']],
+            ['&lt; &amp; &apos; &quot; &gt;', ['< & \' " >']],
+            ['&amp;quot;', ['&quot;']],
+            ['`hello', ['`hello']],
+            ["foo \u{FFFD} bar", ["foo \u{D800} bar"]], // invalid codepoint high surrogates
+            ["foo \u{FFFD}&quot; bar", ["foo \xE3\x80\x22 bar"]], // stripped UTF
+            ['Hello World', ['Hello World']],
+            ['Hello &lt;World&gt;', ['Hello <World>']],
+            ['Hello World', [Html::fromText('Hello World')]],
+            ['Hello &lt;World&gt;', [Html::fromText('Hello <World>')]],
+            ['&quot; &apos; &lt; &gt; &amp; �', ["\" ' < > & \x8F"]],
+            ['`hello`', ['`hello`']],
+            ['` &lt;br&gt; `', ['` <br> `']],
+            ['Foo<br>bar', [Html::fromHtml('Foo<br>bar')]],
+            ['Foo&lt;br&gt;bar', [Html::fromText('Foo<br>bar')]],
+            ['Hello &lt;World&gt;Hello &lt;World&gt;', ['Hello <World>', 'Hello <World>']],
+            ['Hello &lt;World&gt;Hello <World>', ['Hello <World>', Html::fromHtml('Hello <World>')]],
+            ['Hello <World>Hello &lt;World&gt;', [Html::fromHtml('Hello <World>'), 'Hello <World>']],
+            ['Hello <World>Hello <World>', [Html::fromHtml('Hello <World>'), Html::fromHtml('Hello <World>')]],
         ];
     }
 
     /**
+     * @param array<string> $data
      * @dataProvider getHtmlArgs
      */
-    public function testHtml(string $expected, $data): void
+    public function testHtml(string $expected, array $data): void
     {
-        Assert::same($expected, Escape::html($data));
+        Assert::same($expected, Escape::html(...$data));
     }
 
     public function getHtmlAttrArgs(): array
