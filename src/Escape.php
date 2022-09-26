@@ -57,6 +57,16 @@ class Escape
     }
 
     /**
+     * Escapes string for use inside HTML attribute `href` or `src` which contains URL string.
+     * @param string|mixed $data
+     * @return string
+     */
+    public static function htmlHref($data): string
+    {
+        return self::htmlAttr(self::safeUrl($data));
+    }
+
+    /**
      * Escapes string for use inside HTML comments.
      * @param string|mixed $data
      * @return string
@@ -138,6 +148,27 @@ class Escape
     {
         $data = (string)$data;
         return urlencode($data);
+    }
+
+    /**
+     * Sanitizes string for use inside href attribute.
+     * @param string|mixed $data
+     * @param bool $warning
+     * @return string
+     *
+     * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#_safeUrl
+     */
+    public static function safeUrl($data, bool $warning = false):string
+    {
+        if (preg_match('~^(?:(?:https?|ftp)://[^@]+(?:/.*)?|(?:mailto|tel|sms):.+|[/?#].*|[^:]+)$~Di', (string)$data)) {
+            return (string)$data;
+        }
+
+        if($warning) {
+            trigger_error('URL was removed because is invalid or unsafe: ' . $data, E_USER_WARNING);
+        }
+
+        return '';
     }
 
     /**
