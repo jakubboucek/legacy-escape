@@ -11,6 +11,7 @@ Package is substrate of [Latte package](https://github.com/nette/latte/)
 
 - Escape HTML
 - Escape HTML attributes
+- Escape HTML href attributes
 - Escape HTML comments
 - Escape XML
 - Escape JS

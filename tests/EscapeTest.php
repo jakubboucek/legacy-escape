@@ -86,6 +86,23 @@ class EscapeTest extends TestCase
         Assert::same($expected, Escape::htmlAttr($data));
     }
 
+    public function getHtmlHrefArgs(): array
+    {
+        return [
+            ['', ''],
+            ['http://example.com/foo/bar.txt?par=var', 'http://example.com/foo/bar.txt?par=var'],
+            ['', 'javascript:alert(1)'],
+        ];
+    }
+
+    /**
+     * @dataProvider getHtmlHrefArgs
+     */
+    public function testHtmlHref(string $expected, $data): void
+    {
+        Assert::same($expected, Escape::htmlHref($data));
+    }
+
     public function getHtmlCommentArgs(): array
     {
         return [
@@ -230,6 +247,38 @@ class EscapeTest extends TestCase
     public function testUrl(string $expected, $data): void
     {
         Assert::same($expected, Escape::url($data));
+    }
+
+    public function getSafeUrlArgs(): array
+    {
+        return [
+            ['', null],
+            ['', ''],
+            ['', 'http://'],
+            ['http://x', 'http://x'],
+            ['http://x:80', 'http://x:80'],
+            ['', 'http://nette.org@1572395127'],
+            ['https://x', 'https://x'],
+            ['ftp://x', 'ftp://x'],
+            ['mailto:x', 'mailto:x'],
+            ['/', '/'],
+            ['/a:b', '/a:b'],
+            ['//x', '//x'],
+            ['#aa:b', '#aa:b'],
+            ['', 'data:'],
+            ['', 'javascript:'],
+            ['', ' javascript:'],
+            ['javascript', 'javascript'],
+            ['http://example.com', Html::fromHtml('http://example.com')],
+        ];
+    }
+
+    /**
+     * @dataProvider getSafeUrlArgs
+     */
+    public function testSafeUrl(string $expected, $data): void
+    {
+        Assert::same($expected, Escape::safeUrl($data));
     }
 
     public function getNoescapeArgs(): array
