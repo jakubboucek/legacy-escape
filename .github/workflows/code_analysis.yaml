@@ -22,8 +22,16 @@ jobs:
 
           - name: Unit tests
             run: vendor/bin/tester tests -s -C
+        versions:
+          - name: newest
+            arg: ''
+            experimental: false
 
-    name: ${{ matrix.actions.name }} at PHP ${{ matrix.php }}
+          - name: lowest
+            arg: '--prefer-lowest'
+            experimental: true
+
+    name: ${{ matrix.actions.name }} at PHP ${{ matrix.php }} (${{ matrix.versions.name }})
     runs-on: ubuntu-latest
 
     steps:
@@ -54,6 +62,7 @@ jobs:
 
 
       - name: Install Composer
-        run: composer install --no-progress
+        run: composer update --no-progress ${{ matrix.versions.arg }}
 
       - run: ${{ matrix.actions.run }}
+        continue-on-error: ${{ matrix.versions.experimental }}
