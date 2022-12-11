@@ -1,13 +1,13 @@
 {
     "name": "jakubboucek/legacy-escape",
     "description": "Right escape data inserted to HTML, CSS, JS and URL. Substrate of Latte/Latte package.",
-    "type": "library",
     "license": [
         "MIT",
         "BSD-3-Clause",
         "GPL-2.0-only",
         "GPL-3.0-only"
     ],
+    "type": "library",
     "authors": [
         {
             "name": "Jakub Bouček",
@@ -31,11 +31,11 @@
             "JakubBoucek\\Escape\\": "src/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
     "scripts": {
         "phpstan": "phpstan analyze src -c phpstan.neon --level 7",
         "tester": "tester tests"
-    },
-    "config": {
-        "sort-packages": true
     }
 }
