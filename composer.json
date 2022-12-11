@@ -21,7 +21,7 @@
     "require-dev": {
         "nette/tester": "^2.4",
         "nette/utils": "^3.2.5",
-        "phpstan/phpstan": "^0.12.98"
+        "phpstan/phpstan": "1.9.2"
     },
     "suggest": {
         "nette/utils": "Allows to safe escape HTML with markup: https://doc.nette.org/en/utils/html-elements"
