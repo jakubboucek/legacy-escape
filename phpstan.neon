@@ -4,3 +4,9 @@ parameters:
             message: '#Instanceof between mixed and Nette\\Utils\\IHtmlString will always evaluate to false\.#'
             path: src/Escape.php
             count: 2
+            reportUnmatched: false
+        -
+            message: '#Class Nette\\HtmlStringable not found\.#'
+            path: src/Escape.php
+            count: 2
+            reportUnmatched: false
