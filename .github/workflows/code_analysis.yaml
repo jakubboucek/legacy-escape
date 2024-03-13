@@ -16,12 +16,15 @@ jobs:
           - '8.0'
           - '8.1'
           - '8.2'
+          - '8.3'
+
         actions:
           - name: PHPStan
             run: composer phpstan
 
           - name: Unit tests
             run: vendor/bin/tester tests -s -C
+
         versions:
           - name: newest
             arg: ''
