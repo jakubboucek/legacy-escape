@@ -19,9 +19,9 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "nette/tester": "^2.4",
+        "nette/tester": "^2.5",
         "nette/utils": "^3.1 || ^4.0",
-        "phpstan/phpstan": "1.9.2"
+        "phpstan/phpstan": "1.12.6"
     },
     "suggest": {
         "nette/utils": "Allows to safe escape HTML with markup: https://doc.nette.org/en/utils/html-elements"
