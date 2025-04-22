@@ -58,6 +58,20 @@ class Escape
     }
 
     /**
+     * Escapes JSON data for use inside HTML attribute value (especially for data attributes).
+     * @param array|mixed $data
+     * @return string
+     */
+    public static function htmlJsonAttr($data): string
+    {
+        $json = json_encode(
+            $data,
+            JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE
+        );
+        return self::htmlAttr($json);
+    }
+
+    /**
      * Escapes string for use inside HTML attribute `href` or `src` which contains URL string.
      * @param string|mixed $data
      * @return string
