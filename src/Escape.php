@@ -50,9 +50,6 @@ class Escape
     public static function htmlAttr($data): string
     {
         $data = (string)$data;
-        if (strpos($data, '`') !== false && strpbrk($data, ' <>"\'') === false) {
-            $data .= ' '; // protection against innerHTML mXSS vulnerability nette/nette#1496
-        }
         return self::html($data);
     }
 
