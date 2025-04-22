@@ -27,12 +27,10 @@ jobs:
             run: vendor/bin/tester tests -s -C
 
         versions:
-          - name: newest
-            arg: ''
+          - name: highest
             experimental: false
 
           - name: lowest
-            arg: '--prefer-lowest'
             experimental: true
 
     name: ${{ matrix.actions.name }} at PHP ${{ matrix.php }} (${{ matrix.versions.name }})
@@ -40,8 +38,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v5
 
       # see https://github.com/shivammathur/setup-php
       - name: Setup PHP
@@ -51,22 +48,11 @@ jobs:
           extensions: json
           coverage: none
 
-
-      # see https://github.com/actions/cache/blob/main/examples.md#php---composer
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v2
+      - name: Install Composer deps
+        uses: ramsey/composer-install@v3
         with:
-          path: |
-            ${{ steps.composer-cache.outputs.dir }}
-            **/composer.lock
-          key: ${{ runner.os }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
+          dependency-versions: "${{ matrix.versions.name }}"
 
-
-      - name: Install Composer
-        run: composer update --no-progress ${{ matrix.versions.arg }}
-
-      - run: ${{ matrix.actions.run }}
+      - name: Run ${{ matrix.actions.name }}
+        run: ${{ matrix.actions.run }}
         continue-on-error: ${{ matrix.versions.experimental }}
