@@ -42,6 +42,7 @@ class EscapeTest extends TestCase
             ['Hello &lt;World&gt;Hello <World>', ['Hello <World>', Html::fromHtml('Hello <World>')]],
             ['Hello <World>Hello &lt;World&gt;', [Html::fromHtml('Hello <World>'), 'Hello <World>']],
             ['Hello <World>Hello <World>', [Html::fromHtml('Hello <World>'), Html::fromHtml('Hello <World>')]],
+            ['Hello {<!-- -->{my}} lord', ['Hello {{my}} lord']],
         ];
     }
 
@@ -63,7 +64,7 @@ class EscapeTest extends TestCase
             ['string', 'string'],
             ['&lt; &amp; &apos; &quot; &gt;', '< & \' " >'],
             ['&amp;quot;', '&quot;'],
-            ['`hello ', '`hello'],
+            ['`hello', '`hello'],
             ['`hello&quot;', '`hello"'],
             ['`hello&apos;', "`hello'"],
             ["foo \u{FFFD} bar", "foo \u{D800} bar"], // invalid codepoint high surrogates
@@ -71,10 +72,11 @@ class EscapeTest extends TestCase
             ['Hello World', 'Hello World'],
             ['Hello &lt;World&gt;', 'Hello <World>'],
             ['&quot; &apos; &lt; &gt; &amp; �', "\" ' < > & \x8F"],
-            ['`hello` ', '`hello`'],
-            ['``onmouseover=alert(1) ', '``onmouseover=alert(1)'],
+            ['`hello`', '`hello`'],
+            ['``onmouseover=alert(1)', '``onmouseover=alert(1)'],
             ['` &lt;br&gt; `', '` <br> `'],
-            ['Foo&lt;br&gt;bar', Html::fromHtml('Foo<br>bar')]
+            ['Foo&lt;br&gt;bar', Html::fromHtml('Foo<br>bar')],
+            ['Hello &#123;&#123;my}} lord', 'Hello {{my}} lord'],
         ];
     }
 
@@ -84,6 +86,31 @@ class EscapeTest extends TestCase
     public function testHtmlAttr(string $expected, $data): void
     {
         Assert::same($expected, Escape::htmlAttr($data));
+    }
+
+    public function getHtmlJsonAttrArgs(): array
+    {
+        return [
+            ['null', null],
+            ['&quot;&quot;', ''],
+            ['1', 1],
+            ['&quot;string&quot;', 'string'],
+            ['&quot;&lt;/tag&quot;', '</tag'],
+            ['&quot;\u2028 \u2029 ]]&gt; &lt;!&quot;', "\u{2028} \u{2029} ]]> <!"],
+            ['[0,1]', [0, 1]],
+            ['[&quot;0&quot;,&quot;1&quot;]', ['0', '1']],
+            ['&#123;&quot;a&quot;:&quot;0&quot;,&quot;b&quot;:&quot;1&quot;}', ['a' => '0', 'b' => '1']],
+            ['&#123;&quot;a&quot;:&quot;Hello &#123;&#123;my}} world&quot;,&quot;b&quot;:&quot;1&quot;}', ['a' => 'Hello {{my}} world', 'b' => '1']],
+            ['&quot;&lt;/script&gt;&quot;', '</script>'],
+        ];
+    }
+
+    /**
+     * @dataProvider getHtmlJsonAttrArgs
+     */
+    public function testHtmlJsonAttr($expected, $data): void
+    {
+        Assert::same($expected, Escape::htmlJsonAttr($data));
     }
 
     public function getHtmlHrefArgs(): array
