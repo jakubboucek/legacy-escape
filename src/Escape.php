@@ -19,7 +19,7 @@ use RuntimeException;
 class Escape
 {
     /**
-     * Escapes strings for use everywhere inside HTML (except for comments) and concatenate it to string.
+     * Escapes strings for use inside HTML text and concatenate it to string.
      * @param string|HtmlStringable|IHtmlString|mixed ...$data
      * @return string
      *
@@ -33,7 +33,7 @@ class Escape
             if ($item instanceof HtmlStringable || $item instanceof IHtmlString) {
                 $output .= $item;
             } else {
-                $str = htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
+                $str = htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
                 $str = strtr($str, ['{{' => '{<!-- -->{', '{' => '&#123;']);
                 $output .= $str;
             }
@@ -173,13 +173,13 @@ class Escape
      *
      * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#_safeUrl
      */
-    public static function safeUrl($data, bool $warning = false):string
+    public static function safeUrl($data, bool $warning = false): string
     {
         if (preg_match('~^(?:(?:https?|ftp)://[^@]+(?:/.*)?|(?:mailto|tel|sms):.+|[/?#].*|[^:]+)$~Di', (string)$data)) {
             return (string)$data;
         }
 
-        if($warning) {
+        if ($warning) {
             trigger_error('URL was removed because is invalid or unsafe: ' . $data, E_USER_WARNING);
         }
 
