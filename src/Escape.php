@@ -33,7 +33,9 @@ class Escape
             if ($item instanceof HtmlStringable || $item instanceof IHtmlString) {
                 $output .= $item;
             } else {
-                $output .= htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
+                $str = htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
+                $str = strtr($str, ['{{' => '{<!-- -->{', '{' => '&#123;']);
+                $output .= $str;
             }
         }
 
@@ -50,7 +52,9 @@ class Escape
     public static function htmlAttr($data): string
     {
         $data = (string)$data;
-        return self::html($data);
+        $data = htmlspecialchars($data, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
+        $data = str_replace('{', '&#123;', $data);
+        return $data;
     }
 
     /**
