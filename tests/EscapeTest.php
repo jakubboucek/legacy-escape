@@ -114,6 +114,15 @@ class EscapeTest extends TestCase
         Assert::same($expected, Escape::htmlJsonAttr($data));
     }
 
+    public function testInvalidHtmlJsonAttr(): void
+    {
+        $data = ['number' => NAN];
+
+        Assert::exception(static function () use ($data): void {
+            Escape::htmlJsonAttr($data);
+        }, RuntimeException::class, 'Failed to encode JSON for HTML attribute: Inf and NaN cannot be JSON encoded');
+    }
+
     public function getHtmlHrefArgs(): array
     {
         return [

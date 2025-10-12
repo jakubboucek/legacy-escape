@@ -68,6 +68,11 @@ class Escape
             $data,
             JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE
         );
+
+        if ($json === false) {
+            throw new RuntimeException('Failed to encode JSON for HTML attribute: ' . json_last_error_msg());
+        }
+        
         return self::htmlAttr($json);
     }
 
