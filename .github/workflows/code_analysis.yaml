@@ -18,13 +18,14 @@ jobs:
           - '8.2'
           - '8.3'
           - '8.4'
+          - '8.5'
 
         actions:
           - name: PHPStan
-            run: composer phpstan
+            run: composer run phpstan
 
           - name: Unit tests
-            run: vendor/bin/tester tests -s -C
+            run: composer run test
 
         versions:
           - name: highest
