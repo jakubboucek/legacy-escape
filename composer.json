@@ -21,7 +21,7 @@
     "require-dev": {
         "nette/tester": "^2.4 || ^2.5 || dev-master",
         "nette/utils": "^3.1 || ^4.0",
-        "phpstan/phpstan": "1.12.6"
+        "phpstan/phpstan": "1.12.32"
     },
     "suggest": {
         "nette/utils": "Allows to safe escape HTML with markup: https://doc.nette.org/en/utils/html-elements"
@@ -36,6 +36,6 @@
     },
     "scripts": {
         "phpstan": "phpstan analyze src -c phpstan.neon --level 7",
-        "tester": "tester tests"
+        "test": "tester tests -s -C"
     }
 }
