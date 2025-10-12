@@ -19,7 +19,7 @@ use RuntimeException;
 class Escape
 {
     /**
-     * Escapes strings for use everywhere inside HTML (except for comments) and concatenate it to string.
+     * Escapes strings for use inside HTML text and concatenate it to string.
      * @param string|HtmlStringable|IHtmlString|mixed ...$data
      * @return string
      *
@@ -33,7 +33,9 @@ class Escape
             if ($item instanceof HtmlStringable || $item instanceof IHtmlString) {
                 $output .= $item;
             } else {
-                $output .= htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE);
+                $str = htmlspecialchars((string)$item, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
+                $str = strtr($str, ['{{' => '{<!-- -->{', '{' => '&#123;']);
+                $output .= $str;
             }
         }
 
@@ -50,10 +52,28 @@ class Escape
     public static function htmlAttr($data): string
     {
         $data = (string)$data;
-        if (strpos($data, '`') !== false && strpbrk($data, ' <>"\'') === false) {
-            $data .= ' '; // protection against innerHTML mXSS vulnerability nette/nette#1496
+        $data = htmlspecialchars($data, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
+        $data = str_replace('{', '&#123;', $data);
+        return $data;
+    }
+
+    /**
+     * Escapes JSON data for use inside HTML attribute value (especially for data attributes).
+     * @param array|mixed $data
+     * @return string
+     */
+    public static function htmlJsonAttr($data): string
+    {
+        $json = json_encode(
+            $data,
+            JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE
+        );
+
+        if ($json === false) {
+            throw new RuntimeException('Failed to encode JSON for HTML attribute: ' . json_last_error_msg());
         }
-        return self::html($data);
+        
+        return self::htmlAttr($json);
     }
 
     /**
@@ -158,13 +178,13 @@ class Escape
      *
      * @link https://api.nette.org/2.4/source-Latte.Runtime.Filters.php.html#_safeUrl
      */
-    public static function safeUrl($data, bool $warning = false):string
+    public static function safeUrl($data, bool $warning = false): string
     {
         if (preg_match('~^(?:(?:https?|ftp)://[^@]+(?:/.*)?|(?:mailto|tel|sms):.+|[/?#].*|[^:]+)$~Di', (string)$data)) {
             return (string)$data;
         }
 
-        if($warning) {
+        if ($warning) {
             trigger_error('URL was removed because is invalid or unsafe: ' . $data, E_USER_WARNING);
         }
 
