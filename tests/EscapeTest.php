@@ -42,6 +42,7 @@ class EscapeTest extends TestCase
             ['Hello &lt;World&gt;Hello <World>', ['Hello <World>', Html::fromHtml('Hello <World>')]],
             ['Hello <World>Hello &lt;World&gt;', [Html::fromHtml('Hello <World>'), 'Hello <World>']],
             ['Hello <World>Hello <World>', [Html::fromHtml('Hello <World>'), Html::fromHtml('Hello <World>')]],
+            ['Hello &#123;my} lord', ['Hello {my} lord']],
             ['Hello {<!-- -->{my}} lord', ['Hello {{my}} lord']],
         ];
     }
