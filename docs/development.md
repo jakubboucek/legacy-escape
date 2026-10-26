@@ -30,6 +30,6 @@ The test script runs `tester tests -s -C`. PHPStan analyzes `src/` at level 7 us
 
 ## Continuous integration
 
-`.github/workflows/code_analysis.yaml` runs tests and PHPStan on pushes and pull requests, across its PHP version matrix and highest/lowest dependency resolutions. Lowest-dependency check failures are allowed by the workflow. Refer to the workflow for the exact matrix.
+`.github/workflows/code_analysis.yaml` runs tests and PHPStan on pushes and pull requests, across its PHP version matrix and highest/lowest dependency resolutions. For lowest dependencies, only test and static-analysis failures are allowed; dependency installation failures intentionally fail the job. Refer to the workflow for the exact matrix.
 
 `.gitattributes` excludes tests, CI configuration, and PHPStan configuration from distribution archives.
