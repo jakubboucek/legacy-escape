@@ -11,6 +11,7 @@ Package is substrate of [Latte package](https://github.com/nette/latte/)
 
 - Escape HTML
 - Escape HTML attributes
+- Encode JSON for HTML attributes
 - Escape HTML href attributes
 - Escape HTML comments
 - Escape XML
@@ -40,47 +41,55 @@ use JakubBoucek\Escape\Escape;
 echo 'Registered user: ' . Escape::html($username);
 ```
 
-You can use shortcut by aliasing too:
+You can also use an alias:
 ```php
 use JakubBoucek\Escape\Escape as E;
 
 echo 'Registered user: ' . E::html($username);
 ```
 
+### Attributes and JavaScript
+
+```php
+echo '<a href="' . Escape::htmlHref($url) . '">' . Escape::html($label) . '</a>';
+echo '<div data-options="' . Escape::htmlJsonAttr($options) . '"></div>';
+echo '<script>const options = ' . Escape::js($options) . ';</script>';
+```
+
+`js()` returns a complete JSON literal; do not wrap it in additional JavaScript quotes. `url()` encodes individual URL components, while `htmlHref()` filters a URL and escapes it for an HTML attribute.
+
 ## CSS specifics
 
-In few cases you cannot use `Escape::css($cssColor)` to escape
-some known format, because standard escaping is broke CSS format. Class `EscapeCss` has prepared
-limited set of known propetries with specefics format:
+`Escape::css()` escapes punctuation that some CSS values need. `EscapeCss` provides a dedicated filter for color values.
 
 ### `color` property
 
-Sanitize value od CSS `color` property to safe format, example:
+Filter a CSS color value:
 
 ```php
 use JakubBoucek\Escape\EscapeCss;
 
-echo '<style>color: ' . EscapeCss::color($cssColor) . ';</style>';
+echo '<style>.label { color: ' . EscapeCss::color($cssColor) . '; }</style>';
 ```
 
-It's prevent attact by escaping color value context.
+The filter returns an empty string for rejected input. It checks a restricted pattern, not full CSS validity; see the [API reference](docs/api.md).
 
 ## Safe HTML content
 
-Package supports escaping HTML with included [safe HTML content](https://doc.nette.org/en/3.1/html-elements).
+With the optional `nette/utils` package installed, `html()` can combine trusted Nette HTML objects with escaped text. It supports both `Nette\HtmlStringable` and `Nette\Utils\IHtmlString`.
 
 Usage:
 ```php
 use JakubBoucek\Escape\Escape;
 use Nette\Utils\Html; 
 
-$avatarUrl = 'http:/example.com/avatar.png';
+$avatarUrl = 'https://example.com/avatar.png';
 $username = 'John Doe <script>hack</script>';
 
 $avatarImage = Html::el('img')->src($avatarUrl)->width(16);
 echo Escape::html($avatarImage, ' ', $username);
 
-// <img src="http:/example.com/avatar.png" width="16"> John Doe &lt;script&gt;hack&lt;/script&gt;
+// <img src="https://example.com/avatar.png" width="16"> John Doe &lt;script&gt;hack&lt;/script&gt;
 ```
 
 ## Output without any escaping
