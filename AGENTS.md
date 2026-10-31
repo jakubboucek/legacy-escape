@@ -2,7 +2,6 @@
 
 ## Communication and documentation
 
-- Communicate with the user in Czech.
 - Write project documentation, code identifiers, comments, commit messages, and other project text in English.
 - Keep documentation concise and factual, describing the current implemented state. Use commits and PR descriptions for change history, not documentation.
 - Temporary plans are appropriate only for large, multi-iteration refactoring; consolidate them when the work is complete.
